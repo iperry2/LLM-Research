@@ -1,0 +1,294 @@
+import os
+import re
+import requests
+import sys
+from num2words import num2words
+import pandas as pd
+import numpy as np
+import tiktoken
+import openai
+from PyPDF2 import PdfReader
+from typing import Any, Dict, List, Tuple
+
+#from openai.embeddings_utils import cosine_similarity
+
+
+# Set your OpenAI API key as the environment variable OPENAI_API_KEY
+os.environ["OPENAI_API_KEY"] = "REMOVED"
+
+# Function to normalize text (s is input text)
+def normalize_text(s, sep_token = " \n "):
+    s = re.sub(r'\s+',  ' ', s).strip()
+    s = re.sub(r". ,","",s)
+    # remove all instances of multiple spaces
+    s = s.replace("..",".")
+    s = s.replace(". .",".")
+    s = s.replace("\n", "")
+    s = s.strip()
+    return s
+
+#function for df manip
+def cosine_similarity(a, b):
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+#function to extract text from pdf
+def extract_text_from_pdf(pdf_path):
+    reader = PdfReader(pdf_path) 
+    text = []
+    for page in reader.pages:
+        text.append(page.extract_text())
+    return text
+
+#function to get the embedding
+def get_embedding(text, model="text-embedding-3-small"): # model = "deployment_name"
+    return openai.embeddings.create(input = [text], model=model).data[0].embedding
+
+#def generate_embeddings(text, model="text-embedding-3-small"):
+    #return openai.embeddings.create(input=text, model=model).data[0].embedding
+
+#function to search the embedded documents
+def search_docs(df, user_query, top_n=8, to_print=True):
+    embedding = get_embedding(
+    user_query,
+    model="text-embedding-3-small" # model should be set to the deployment name you chose when you deployed the text-embedding-ada-002 (Version 2) model
+    )
+    df["similarity"] = df["ada_v2"].apply(lambda x: cosine_similarity(x, embedding))
+    
+    res = (
+        df.sort_values("similarity", ascending=False)
+        .head(top_n)
+        .reset_index(drop=True) # Reset the index after sorting
+    )
+    if to_print:
+        print(res)
+    return res
+
+# Function to split text into chunks by tokens   
+def chunk_text_by_tokens(tokenized_text, tokenizer, max_tokens_per_chunk=8000):
+    chunks = []
+    current_chunk = ""
+    for token in tokenized_text:
+        try:
+            token_ids = tokenizer.encode(token)  # Convert token string to token IDs
+            token_str = tokenizer.decode(token_ids)  # Decode token IDs to string
+        except Exception as e:
+            print(f"Error decoding token: {e}")
+            token_str = ""  # Assign an empty string if decoding fails
+        if len(current_chunk) + len(token_str) <= max_tokens_per_chunk:
+            current_chunk += token_str + " "
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = token_str + " "
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    return chunks
+
+# Function to write PDF text to a text file
+def write_pdf_to_text(pdf_path):
+    with open('output.txt', 'a') as f:  # Use 'a' mode for appending
+        reader = PdfReader(pdf_path)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            f.write(page_text)
+            f.write("\n")
+
+def main():
+    """
+    # List of pdf files
+    pdf_files = ["/Users/ian/Library/Containers/com.apple.calculator/Data/Documents/AI-SLR-Paper.pdf", 
+                 "/Users/ian/Library/Containers/com.apple.calculator/Data/Documents/AI-Lit-Review.pdf"  , 
+                 "/Users/ian/Library/Containers/com.apple.calculator/Data/Documents/SpectralLines.pdf"]
+    """
+
+     # Folder containing PDF files
+    pdf_folder = "Sample-DataFrame"
+
+    # List all PDF files in the folder
+    pdf_files = [os.path.join(pdf_folder, filename) for filename in os.listdir(pdf_folder) if filename.endswith(".pdf")]
+
+    #List to store the text from all PDF's
+    text = []
+    doc_indices = []
+
+
+    """
+    # Write the all of the PDF's text to a text file
+    for pdf_file in pdf_files:
+        write_pdf_to_text(pdf_file)
+    
+    """
+    # Write the pages to a text file 
+    for pdf_file in pdf_files:
+        reader = PdfReader(pdf_file)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            text.append(page_text)
+            doc_indices.append(len(text) - 1)  # Index of the current document
+
+    ilist = list(range(len(text)))
+    len_docs = [len(t) for t in text]
+
+    # Create a dictionary with the data
+    data = {"index": ilist, "text": text, "text_len": len_docs}
+
+    # Create a DataFrame from the unchnaged pdf data
+    df = pd.DataFrame(data)
+
+
+
+    #print(df)
+    #print("---------------------------------------------------------------")
+    #print("That was the original dataframe")
+    #print("---------------------------------------------------------------")
+    # Set display options to show all columns of df
+    pd.options.mode.chained_assignment = None #https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#evaluation-order-matters
+
+    # Normalize the text
+    df['text']= df["text"].apply(lambda x : normalize_text(x))
+
+    # Tokenize the text
+    """
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    tokenized_texts = [tokenizer.encode(t) for t in text]
+    df['n_tokens'] = df["text"].apply(lambda x: len(tokenizer.encode(x)))
+    """
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    df['n_tokens'] = df["text"].apply(lambda x: len(tokenizer.encode(x)))
+    df = df[df.n_tokens<8192]
+    len(df) 
+
+
+    # Get embeddings
+    df['ada_v2'] = df["text"].apply(lambda x: get_embedding(x))
+
+    # Initialize the DataFrame  
+    #df = pd.DataFrame(columns=["index", "text", "ada_v2", "text_len", "n_tokens"])
+
+    """
+    # Chunk text into smaller pieces based on token limit
+    max_tokens_per_chunk = 8192
+    for idx, (doc_index, tokenized_text) in enumerate(zip(doc_indices, tokenized_texts)):
+        for chunk in chunk_text_by_tokens(tokenized_text, tokenizer, max_tokens_per_chunk):
+            chunk_text = tokenizer.decode_tokens_bytes(chunk)
+            df = df.append({"index": doc_index, "text": chunk_text}, ignore_index=True)
+
+    """
+
+
+ 
+
+
+    """
+    df['n_tokens'] = df["text"].apply(lambda x: len(tokenizer.encode(x)))
+    
+
+    
+
+
+    # Create a DataFrame from the data
+    df = pd.DataFrame(data)
+    """
+  
+   
+    # Set display options to show all columns of df
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    
+    # Print the DataFrame
+    #print(df)
+
+    # Save DataFrame to a CSV file
+    #df.to_csv('dataframe.csv')  # Set index=False to exclude index from the saved file
+
+    
+    
+    query = "What is being studied? What are the differences between the papers?"
+    res = search_docs(df, query, top_n=26)
+    #print(res["text"][1])
+    query_text = "Based on the references above, " + query
+    refs = ""
+    for row in res.iterrows():
+        index = row[0]
+        txt = row[1]["text"]
+        refs += f"Document {index}:\n{txt}\n\n"
+    
+    query_text = refs + query_text
+
+    """
+    # Query the OpenAI API
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=query,
+        max_tokens=100,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+
+    # Get the generated text from the API response
+    generated_text = response.choices[0].text.strip()
+
+    # Print the generated text
+    print(generated_text)
+
+    """
+
+
+    
+    response = openai.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+    {"role": "system", "content": "You are a helpful assistant that summarizes the contents of a database.  Make one summary for astronomy related things. Make a seperate summary from things that do not pertain to astronomy."},
+    {"role": "user", "content": query_text},
+    ]
+    )
+    print("--------------------------------------------------------------------------------------------------------------------------------------------")
+    print(response.choices[0].message.content)
+    print("--------------------------------------------------------------------------------------------------------------------------------------------")
+    
+
+
+
+
+    """
+    # Threshold for "high" similarity
+    threshold = 0.8
+    similarities = []  # Container to store cosine similarities
+
+    # Example of calculating cosine similarity between embeddings of different documents
+    for i in range(27):  # PDF 1 
+        for j in range(27, len(df)):  # PDF 2 and PDF 3
+            embedding1 = df['ada_v2'][i]
+            embedding2 = df['ada_v2'][j]
+            similarity_score = cosine_similarity(embedding1, embedding2)
+            if similarity_score >= threshold:
+                if j < 71:
+                    key = (i, j, 'PDF 1 vs. PDF 2')
+                else:
+                    key = (i, j, 'PDF 1 vs. PDF 3')
+                similarities.append((key, similarity_score))
+                
+    # Print similarities
+    for key, similarity_score in similarities:
+        print(f"Cosine similarity between document {key[0]} and document {key[1]} ({key[2]}): {similarity_score}")
+
+
+    # Find the highest similarity score
+    max_similarity = max(similarities, key=lambda x: x[1])[1]
+
+    # Filter out pairs with the highest similarity score
+    max_similarity_pairs = [(key, score) for key, score in similarities if score == max_similarity]
+
+    # Print the plain text of documents with the highest similarity score
+    for key, similarity_score in max_similarity_pairs:
+        doc1_index, doc2_index, pdf_pair = key
+        doc1_text = df.loc[doc1_index, 'text']
+        doc2_text = df.loc[doc2_index, 'text']
+        print(f"Plain text of document {doc1_index} ({pdf_pair.split(' vs. ')[0]}):\n{doc1_text}\n")
+        print("-" * 50)  # Page break
+        print(f"Plain text of document {doc2_index} ({pdf_pair.split(' vs. ')[1]}):\n{doc2_text}\n")
+    """
+if __name__ == "__main__":
+    main()
+
