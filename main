@@ -135,12 +135,6 @@ def main():
     # Create a DataFrame from the unchnaged pdf data
     df = pd.DataFrame(data)
 
-
-
-    #print(df)
-    #print("---------------------------------------------------------------")
-    #print("That was the original dataframe")
-    #print("---------------------------------------------------------------")
     # Set display options to show all columns of df
     pd.options.mode.chained_assignment = None #https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#evaluation-order-matters
 
@@ -172,20 +166,10 @@ def main():
         for chunk in chunk_text_by_tokens(tokenized_text, tokenizer, max_tokens_per_chunk):
             chunk_text = tokenizer.decode_tokens_bytes(chunk)
             df = df.append({"index": doc_index, "text": chunk_text}, ignore_index=True)
-
     """
-
-
- 
-
 
     """
     df['n_tokens'] = df["text"].apply(lambda x: len(tokenizer.encode(x)))
-    
-
-    
-
-
     # Create a DataFrame from the data
     df = pd.DataFrame(data)
     """
