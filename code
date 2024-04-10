@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Tuple
 
 
 # Set your OpenAI API key as the environment variable OPENAI_API_KEY
-os.environ["OPENAI_API_KEY"] = "REMOVED"
+os.environ["OPENAI_API_KEY"]
 
 # Function to normalize text (s is input text)
 def normalize_text(s, sep_token = " \n "):
