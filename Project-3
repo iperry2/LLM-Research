@@ -1,2 +1,116 @@
 # Project-3
 # FalconAI text summarization of folder containing 8 sample PDF's
+# First had issues on formatting and passing method
+# Once that was fixed now running into same context window issues
+
+import os
+import re
+import requests
+import sys
+from num2words import num2words
+import pandas as pd
+import numpy as np
+import tiktoken
+import openai
+from PyPDF2 import PdfReader
+from typing import Any, Dict, List, Tuple
+from transformers import pipeline
+
+
+#function to extract text from pdf
+def extract_text_from_pdf(pdf_path):
+    reader = PdfReader(pdf_path) 
+    text = []
+    for page in reader.pages:
+        text.append(page.extract_text())
+    return text
+
+# Function to write PDF text to a text file
+def write_pdf_to_text(pdf_path):
+    with open('output.txt', 'a') as f:  # Use 'a' mode for appending
+        reader = PdfReader(pdf_path)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            f.write(page_text)
+            f.write("\n")
+
+#function to get the embedding
+def get_embedding(text, model="text-embedding-3-small"): # model = "deployment_name"
+    return openai.embeddings.create(input = [text], model=model).data[0].embedding
+
+# use FalconsAI to get summary
+def summarize_text(text):
+    summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+
+    # Ensure that the input is either a string or a list of strings
+    if not isinstance(text, str) and not all(isinstance(t, str) for t in text):
+        raise ValueError("Input must be either a string or a list of strings.")
+
+    # Check if the input is a list of strings
+    if isinstance(text, list):
+        text = "\n".join(text)
+
+    max_length = min(2 * len(text), 7)  # Adjust max_length based on input length, up to a maximum of 200
+    min_length = int(min(0.8 * len(text), 5))  # Set min_length to 80% of the input length or 25, whichever is larger
+    summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
+    return summary
+
+# Function to normalize text (s is input text)
+def normalize_text(s, sep_token = " \n "):
+    s = re.sub(r'\s+',  ' ', s).strip()
+    s = re.sub(r". ,","",s)
+    # remove all instances of multiple spaces
+    s = s.replace("..",".")
+    s = s.replace(". .",".")
+    s = s.replace("\n", "")
+    s = s.strip()
+    return s
+
+def main():
+    # Folder containing PDF files
+    pdf_folder = "Sample-DataFrame"
+
+    # List all PDF files in the folder
+    pdf_files = [os.path.join(pdf_folder, filename) for filename in os.listdir(pdf_folder) if filename.endswith(".pdf")]
+
+    #List to store the text from all PDF's
+    text = []
+    doc_indices = []
+    
+    # Write the pages to the text file 
+    for pdf_file in pdf_files:
+        reader = PdfReader(pdf_file)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            text.append(page_text)
+            doc_indices.append(len(text) - 1)  # Index of the current document
+    
+    ilist = list(range(len(text)))
+    len_docs = [len(t) for t in text]
+
+    # Create a dictionary with the data
+    data = {"index": ilist, "text": text, "text_len": len_docs}
+
+    # Create a DataFrame from the unchnaged pdf data
+    df = pd.DataFrame(data)
+
+    # Normalize the text
+    df['text']= df["text"].apply(lambda x : normalize_text(x))
+
+    # Iterate over each PDF file and summarize
+    # Instead of reading all together
+    # This bypasses the memory issue
+    full_summary = ""
+    for pdf_file in pdf_files:
+        # Extract text from PDF
+        text = extract_text_from_pdf(pdf_file)
+        # Summarize the text
+        summary = summarize_text(text)
+        # Append the summary to the full summary
+        full_summary += summary['summary_text'] + "\n"
+
+    # Print the full summary
+    print(full_summary)
+
+if __name__ == "__main__":
+    main()
