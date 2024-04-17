@@ -1,1 +1,43 @@
 # Project 2
+
+import os
+import re
+import requests
+import sys
+from num2words import num2words
+import pandas as pd
+import numpy as np
+import openai
+from PyPDF2 import PdfReader
+
+from transformers import pipeline
+
+def main():
+
+    # Sample of text to summarize
+    Sample = """Model Description:
+The Fine-Tuned T5 Small is a variant of the T5 transformer model, designed for the task of text summarization. It is adapted and fine-tuned to generate concise and coherent summaries of input text.
+
+The model, named "t5-small," is pre-trained on a diverse corpus of text data, enabling it to capture essential information and generate meaningful summaries. Fine-tuning is conducted with careful attention to hyperparameter settings, including batch size and learning rate, to ensure optimal performance for text summarization.
+
+During the fine-tuning process, a batch size of 8 is chosen for efficient computation and learning. Additionally, a learning rate of 2e-5 is selected to balance convergence speed and model optimization. This approach guarantees not only rapid learning but also continuous refinement during training.
+
+The fine-tuning dataset consists of a variety of documents and their corresponding human-generated summaries. This diverse dataset allows the model to learn the art of creating summaries that capture the most important information while maintaining coherence and fluency.
+
+The goal of this meticulous training process is to equip the model with the ability to generate high-quality text summaries, making it valuable for a wide range of applications involving document summarization and content condensation.
+
+"""
+
+    # use FalconsAI to get summary
+    summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+        # Print model and tokenizer for verification
+    #print("Model:", summarizer.model)
+    #print("Tokenizer:", summarizer.tokenizer)
+    
+    # Test summarization with the sample text
+    #print("Sample Text:", Sample)
+    summary = summarizer(Sample, max_length=200, min_length=25, do_sample=False)
+    print("Summary:", summary)
+
+if __name__ == "__main__":
+    main()
