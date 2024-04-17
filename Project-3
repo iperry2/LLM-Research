@@ -2,6 +2,7 @@
 # FalconAI text summarization of folder containing 8 sample PDF's
 # First had issues on formatting and passing method
 # Once that was fixed now running into same context window issues
+# Max token length for FalconAI is 512
 
 import os
 import re
