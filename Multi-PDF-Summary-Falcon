@@ -1,0 +1,131 @@
+import os
+import re
+import requests
+import sys
+from num2words import num2words
+import pandas as pd
+import numpy as np
+import tiktoken
+import openai
+from PyPDF2 import PdfReader
+from typing import Any, Dict, List, Tuple
+from transformers import pipeline, AutoTokenizer
+
+
+#function to extract text from pdf
+def extract_text_from_pdf(pdf_path):
+    reader = PdfReader(pdf_path) 
+    text = []
+    for page in reader.pages:
+        text.append(page.extract_text())
+    return text
+
+#function to get the embedding
+def get_embedding(text, model="text-embedding-3-small"): # model = "deployment_name"
+    return openai.embeddings.create(input = [text], model=model).data[0].embedding
+
+# use FalconsAI to get summary
+def summarize_text(text):
+    summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+
+    # Ensure that the input is either a string or a list of strings
+    if not isinstance(text, str) and not all(isinstance(t, str) for t in text):
+        raise ValueError("Input must be either a string or a list of strings.")
+
+    # Check if the input is a list of strings
+    if isinstance(text, list):
+        text = "\n".join(text)
+
+    max_length = min(2 * len(text), 7)  # Adjust max_length based on input length, up to a maximum of 200
+    min_length = int(min(0.5 * len(text), 5))  # Set min_length to 80% of the input length or 25, whichever is larger
+    summary = summarizer(text, max_length=max_length, min_length=min_length, do_sample=False)
+    return summary
+
+# Use FalconsAI to get summary for a chunk of text
+def summarize_text_chunk(text_chunk, summarizer):
+    max_length = min(2 * len(text_chunk), 200)  # Adjust max_length based on input length, up to a maximum of 200
+    min_length = min(0.5 * len(text_chunk), 10)  # Set min_length to 50% of the input length or 10, whichever is larger
+    summary = summarizer(text_chunk, max_length=max_length, min_length=min_length, do_sample=False)
+    return summary
+
+# Function to normalize text (s is input text)
+def normalize_text(s, sep_token = " \n "):
+    s = re.sub(r'\s+',  ' ', s).strip()
+    s = re.sub(r". ,","",s)
+    # remove all instances of multiple spaces
+    s = s.replace("..",".")
+    s = s.replace(". .",".")
+    s = s.replace("\n", "")
+    s = s.strip()
+    return s
+
+
+
+    
+def main():
+    # Folder containing PDF files
+    pdf_folder = "Sample-DataFrame"
+
+    # List all PDF files in the folder
+    pdf_files = [os.path.join(pdf_folder, filename) for filename in os.listdir(pdf_folder) if filename.endswith(".pdf")]
+
+    # Define the summarizer and tokenizer using transformers library
+    summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+
+    # index of summary chunk
+    summary_chunk_index = 0
+
+    # Output file path for long output
+    output_file = "output.txt"
+    with open(output_file, "w") as output_file:# Clear the output file
+
+
+        # Iterate over each PDF file
+        full_summary = ""
+        for pdf_file in pdf_files:
+            # Extract text from PDF
+            text = extract_text_from_pdf(pdf_file)
+        
+            # Normalize text
+            normalized_text = [normalize_text(page_text) for page_text in text]
+        
+            # Join normalized text into a single string
+            combined_text = " ".join(normalized_text)
+            output_file.write(f"------------------------------------------------------------------------------------------------------"  + "\n")  
+            output_file.write(f" \n Combined normalized text length: {len(combined_text)}"  + "\n")  # Debug print to check text length
+            output_file.write("\n")
+
+            # Initialize variables for summarizing chunks of text
+            max_chunk_size = 500  # Choose an appropriate chunk size (based on model limits)
+            start_idx = 0
+            summaries = []
+
+            # Process each chunk of text
+            while start_idx < len(combined_text):
+                # Select a chunk of the text
+                text_chunk = combined_text[start_idx:start_idx + max_chunk_size]
+                output_file.write(f"Processing chunk from index {start_idx} to {start_idx + max_chunk_size}"  + "\n")  # Debug print
+
+
+                # Summarize the chunk of text
+                summary_result = summarizer(text_chunk, max_length=150 , min_length=10 , do_sample=False)
+            
+                # Collect the summary
+                if summary_result:
+                    summaries.append(summary_result[0]["summary_text"])
+
+                    summary_text = summary_result[0]["summary_text"]
+                    output_file.write(f"Summary {summary_chunk_index}: \n{summary_text}\n")  # Debug print to check the generated summary
+                    summary_chunk_index += 1
+                    output_file.write(f"\n")
+                # Move the start index forward
+                start_idx += max_chunk_size
+        
+            # Combine the summaries for the current PDF
+            full_summary += "\n".join(summaries) + "\n\n"
+
+        # Print the final full summary
+        print(full_summary)
+
+if __name__ == "__main__":
+    main()
