@@ -1,0 +1,99 @@
+
+Title:  Residual eccentricity as a systematic uncertainty on the formation channels of binary black holes
+
+
+Abstract:  Resolving the formation channel(s) of merging binary black holes is a key
+goal in gravitational-wave astronomy. The orbital eccentricity is believed to
+be a precious tracer of the underlying formation pathway, but is largely
+dissipated during the usually long inspiral between black-hole formation and
+merger. Most gravitational-wave sources are thus expected to enter the
+sensitivity windows of current detectors on configurations that are compatible
+with quasi-circular orbits. In this paper, we investigate the impact of
+"negligible" residual eccentricity -- lower than currently detectable by
+LIGO/Virgo -- on our ability to infer the formation history of binary black
+holes, focusing in particular on their spin orientations. We trace the
+evolution of both observed and synthetic gravitational-wave events backward in
+time, while resampling their residual eccentricities to values that are below
+the detectability threshold. Eccentricities in-band as low as $\sim 10^{-4}$
+can lead to significant biases when reconstructing the spin directions,
+especially in the case of loud, highly precessing systems. Residual
+eccentricity thus act like a systematic uncertainty for our astrophysical
+inference. As a mitigation strategy, one can marginalize the posterior
+distribution over the residual eccentricity using astrophysical predictions.
+
+
+Authors:  [arxiv.Result.Author('Giulia Fumagalli'), arxiv.Result.Author('Isobel Romero-Shaw'), arxiv.Result.Author('Davide Gerosa'), arxiv.Result.Author('Viola De Renzis'), arxiv.Result.Author('Konstantinos Kritos'), arxiv.Result.Author('Aleksandra Olejak')]
+
+
+PDF URL:  http://arxiv.org/pdf/2405.14945v1
+
+
+Summary:  LIGO and Virgo are delivering hundreds of gravitational- wave detections . BHs are simple objects in General Relativity, which implies we have a limited number of 
+spins, merger rates, and orbital eccentricity are thought to be clean indicators of the BH progenitors and their formation mechanisms . From a signal perspective, they both introduce on timescale
+GW data presents challenges, at least for sufficiently short signals . Sources formed with identical g.fumagalli47@campus.unimib.itparameters but different eccentric
+interplay between spins and eccentricity requires careful consideration . Propagating spin directions from formation to detection is crucial to transfer as- trophysical predictions to the regime where sources are observable .
+etection to formation, has key applications in single-event inference [29–31], pop-ulation studies [ 29,32], and archival searches for, say, the LISA
+post-Newtonian (PN) effects tend to remove eccentricity from binary systems on a timescale that is shorter than that of the inspiral itself . Current ground-based interferometer
+GW sourcesarXiv:2405.14945v1 [astro-ph.HE] 23 May 2024 2 have some residual eccentricity eres ethrwhich
+Quasi-circular orbits act as dynamical attractors for the forward evolution of BH binaries [41] for binaries on eccentric orbits, small variations of their parameters at GW
+How can this source of systematic be mitigated? We tackle these questions by applying the PN formal- ism of Refs. [ 26,28] to real LIGO/Virgo observations, synthetic 
+assumption that eres= 0, we resample the residual eccentricity . We compare the resulting spin distributions against those obtained assuming quasi-circularity for the entire ins
+Unaccounted (and, at present, unaccountable) eccentricity at detection can in- troduce substantial variation in our inference of spins at BH binary formation . residual eccentricity is
+astrophysical models of BH binary formation [44–46] can be used to heuristically “marginalize” over this systematic, thereby mitigating its impact .
+BH binaries are characterized by masses m1,2, mass ratio q=m2/m11, total mass M=m1+m2, dimen- sionless spin magnitudes 
+escribed using Keplerian notions for the semi-major axis aand the orbital eccentricity e[0,1). Hereafter we set c=G= 1
+We evolve binaries along their inspiral using the precession-averaged PN approach of Refs. [26] We first neglect radi- ation reaction and solve the spin-pre
+GW emission is then introduced quasi-adiabatically, mod-eling the spin evolution as a continuous series of those semi-analytic solutions . Initially restricted to circular sources [27,
+Ce GW frequency fref= 20 Hz, with exception of GW190521 . We calculate the semi-major axis ausing the PN expression reported in Eq.
+Weset e[0, emax=0 corresponds to assuming binaries that evolved on quasi-circular orbits since formation . In the follow- 3 ing, we use
+hile Ref. [ 42] quotes the threshold ethr0.05at 10 Hz . We check that our resam-pled values of eresare lower
+We make use of simulations of binaries formed in isolation [ 52] and binaries assembled dynamically in dense stellar clusters [ 21,46]. We draw eccentricities directly from their distributions as predicted at 
+BH binary for- mation typically happens as separations as large as 106M[46,53,54] If the residual eccentricity in band is= 0, binaries will reach this
+eresofO(102) resulting eccentricities at a= 104Mcan be larger than 0.6 . Extending the applicability of PN integrations in the
+C. Gravitational-wave signals We consider both current LIGO/Virgo observations as well as synthetic injections . Together, these sources cover a broad range of SNRs and degrees of spin
+For event GW200129 _065458 we also consider posterior sam- ples obtained with NRSur7dq4 [57] from Ref. [ 58], which
+Bina- ries have masses m1,2[5,100]Mconstrained to q[1/8,1] andMc[10,60]M . Sources
+ec- tor performances representative of the 4th observing run of LIGO/Virgo and neglecting non-stationary noise realizations . We do not have posterior distributions for the residual
+We opt for the Hellinger distance [63] where pandqare probability density functions of a variable x . In our case, these are the back-propagated posteriors obtained assuming
+We compute the integral in Eq. (1) via Monte Carlo . The Hellinger distance has the desirable properties of being symmetric, i.e. dH(p, q) =
+The results are dH N(, ),N(+n, ) =s 1exp n2 8 . Some evaluations are reported in Table
+ter pfor the synthetic event labeled uni_88 in the dataset of Ref. [61] . This signal was handpicked for illustrative purposes because it
+tection ( fref= 20Hz) as well as those resulting from our back-propagation procedure (a= 104M) as the adopted residual eccentricity increases, the back
+it is informative to compare the locations of the back propagated distributions against those at detection as function of the residual eccentricity . h emax= 102and its circular counterpart with e
+The evolution of the spin orientations depends on semi- major axis aand eccentricity ethrough the orbital an- gular momentum L . From the Newtonian scaling L
+s have a smaller angular momentum than circular binaries for a given value of a . the posteriors shown in Fig. 1 are seated between the back-propagated
+GW191109_010717hasanSNRof 13.6andisconsistent with a binary BH with m1= 81+13 9M
+In this case, we report a dis- tance dH0.01between back-propagated posteriors with emax= 102andemax = 0. Overall, this
+Parameter-space exploration We present a broader exploration of the parameter space using the Hellinger distance (Sec. IID) as our sum- mary statistic . Figure 2 shows the values
+the distance between our circular and eccen- tric back-propagated prediction increases with p . We find that the systematic uncertainty associated with residual eccentricity
+Fig. 2 shows substantial variability, even across several orders of magnitude in dH . This is not surprising given the high dimensionality of the BH binary parameter space and our sparse coverage
+Back -propagated 0.0 0.5 1.0 1.5 2.0 p0.000.250.500.751.001.251.501.75GW191109 010717 emax= 0
+Dashed curves show the distributions at detection ( fref= 20Hz); solid curves are obtained by back-propagating posterior samples to a= 104M . The dark blue
+Contours in the 2-dimensional distributions on the left correspond to 50% and 90% credible intervals . An animated version of this figure is available at www.davidegerosa.com/s
+We con- sider 69 real events detected by LIGO/Virgo (squares) and 100 synthetic signals (circles) Diamonds mark results ob-tained using the posteriors samples of
+(higher) SNR tend to have larger (smaller) values of dH, corresponding to the regime where statistical systematic uncertainties dominate the error budget . We now present a more motivated strategy
+ch makes direct use of state-of-the-art population-synthesis predictions . We interpret thisasan „astrophysicalmarginalization” overtheresidual eccentricity 
+ictions obtained with Rapster [46] and CMC[45] are two of the cur- rent state-of-the-art cluster codes in the field . These are compared against
+TheRapster population is generated based on the assumptions detailed in Sec. III. A of Ref. [ 65]. For Star- Track, we use the population referred to as “default model
+e ejected, in-cluster and GW capture sub-channels respectively . For Rapster andStarTrack populations, eccentric-ity and spin distributions are provided at BH
+This is consistent with the injections from Ref. [ 43] intro duced in Sec. IIC . This results in a set of weights pdetfor each source in our 
+Figure 3 shows the resulting residual eccentricities at fref= 10Hz . The distributions predicted for each forma-tion (sub)channel are quite distinct . Predictions from the two populations
+Numbers in parenthesis refer to sources with eres ethr= 0.05 . 1010108106104102100 .10.20.3
+Distributions related to three sub-channels within the two dynamically formed populations are shown in blue for ejected binaries merging outside the cluster . red for binaries formed via GW capture
+eft mark systems with eccentricity larger than the resolvability threshold set to ethr=0.05 . Bina-ries are weighted by their GW detectability .
+We truncate the distributions of Fig. 3 to eethr0.05, which mimics a scenario where highly eccentric sources can be identified as such . Note that
+Figure 4 shows results for the same software injection considered in top panels of Fig. 1 . We first propagate the GW posteriors forward from fref= 20Hz (where the injections were
+Figure 4 shows the same trends highlighted in Sec. IIIA . distributions with the lowest (largest) residual eccentricity such as iso- lated binaries (GW captures) have back
+our predictions sit close to the distributions for the ejected and in-cluster sub-channels . the procedure we present heavily relies on the adopted astrophysical population .
+our results do not capture correlations between the residual eccentricity and the other parameters (say the masses or the spins) of the back-propagated signal . We envision this approach to be used in
+the key observables in GW astronomy are time dependent, i.e. theirvalueschange, sometimesignificantly, as sources inspiral . Capturing their coupled
+lly reported as compatibile with binaries on quasi-circular orbits . Eccentricity and spin inclinations are coupled [ 26] and mismodeling in the latter at detection translates into
+Back-propagated posteriors of spin directions assuming astrophyically motivated distributions of residual eccentricity . Dashed curves show distributions at detection ( fref= 20Hz) while
+Contours in the 2-dimensional distributions correspond to 50% and 90% credible intervals . We show predictions from individual sub-channels (blue, orange, green) and a joint predictions that keeps
+stribution from StarTrack (red) are virtually indistinguishable from those obtained with the ejected subchannel (blue)
+this effect is indeed due to couplings between the precession and eccentricity sectors of the BH dynamics . the systematic uncertainty due to residual eccentricity is subdominantcomparedtothestatistical
+features in the inferred population of the BH spins are used to constrain specific mechanisms behind the assembly of BH binaries such as supernova kicks, tidal interactions, mass transfer
+binaries have been back-propagated to past time infinity (i.e. fref= 0Hz)assuming quasi-circular or- bits[29,30,32]. The
+Residual eccentricity might also impact archival searches of stellar-mass BH binaries in LISA data . It has been argued that ground-based detections of merging bin
+this paper shows that residual eccentricity is an important caveat to this statement . The uncertainty is further exacerbated by the known degener- acy between eccentricity and time to merger .
+BH spin directions relies on pre-computed astrophysical distributions . eres=0 for all posterior samples of all the events as has been done so far .
