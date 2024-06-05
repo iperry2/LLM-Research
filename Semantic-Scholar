@@ -1,0 +1,97 @@
+import os
+import re
+import requests
+from num2words import num2words
+import pandas as pd
+import numpy as np
+from PyPDF2 import PdfReader
+import arxiv
+from transformers import pipeline, AutoTokenizer
+
+# Global Variables
+api_key = 'vPm9UzU3oe3DKQ5VCniWo1RTAfD7BRhr3wo78YVZ'
+arxiv_id = '1810.04805'
+
+# Function prototype to retrieve citation information using Semantic Scholar API
+def get_citations_and_abstracts(arxiv_id, api_key):
+    # Convert arXiv ID to Semantic Scholar ID format (arXiv:2402.08565)
+    ss_id = f"arXiv:{arxiv_id}"
+    url = f"https://api.semanticscholar.org/graph/v1/paper/{ss_id}?fields=title,abstract,citations"
+
+    headers = {
+        'x-api-key': api_key
+    }
+
+    print(f"Starting request to Semantic Scholar API for paper {arxiv_id}...")
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        print("Successfully retrieved data from Semantic Scholar.")
+        paper_data = response.json()
+        citations = paper_data.get('citations', [])
+
+        if not citations:
+            print("No citations found for this paper.")
+            return
+
+        print(f"Found {len(citations)} citations.")
+        for i, citation in enumerate(citations, 1):
+            title = citation.get('title', 'No title available')
+            abstract = citation.get('abstract', 'No abstract available')
+            authors = [author.get('name', 'No name available') for author in citation.get('authors', [])]
+            print(f"Citation {i}:")
+            print(f"Title: {title}")
+            print(f"Abstract: {abstract}")
+            print(f"Authors: {', '.join(authors)}")
+            print("\n")
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+
+    print("Finished processing.")
+
+# Function to get citations but it limits what it prints based on available information
+def new_get_citations_and_abstracts(arxiv_id, api_key, max_citations=10):
+    # Convert arXiv ID to Semantic Scholar ID format (arXiv:1810.04805)
+    ss_id = f"ARXIV:{arxiv_id}"
+    url = f"https://api.semanticscholar.org/graph/v1/paper/{ss_id}?fields=title,abstract,citations"
+
+    headers = {
+        'x-api-key': api_key
+    }
+
+    print(f"Starting request to Semantic Scholar API for paper {arxiv_id}...")
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        print("Successfully retrieved data from Semantic Scholar.")
+        paper_data = response.json()
+        citations = paper_data.get('citations', [])
+
+        if not citations:
+            print("No citations found for this paper.")
+            return
+
+        print(f"Found {len(citations)} citations.")
+        for i, citation in enumerate(citations[:max_citations], 1):
+            title = citation.get('title', 'No title available')
+            abstract = citation.get('abstract', 'No abstract available')
+            authors = [author.get('name', 'No name available') for author in citation.get('authors', [])]
+            print(f"Citation {i}:")
+            print(f"Title: {title}")
+            print(f"Abstract: {abstract}")
+            print(f"Authors: {', '.join(authors) if authors else 'No authors available'}")
+            print("\n")
+        if len(citations) > max_citations:
+            print(f"...and {len(citations) - max_citations} more citations.")
+    else:
+        print(f"Failed to retrieve data: {response.status_code}")
+
+    print("Finished processing.")
+
+def main():
+    print("Starting main function...")
+    new_get_citations_and_abstracts(arxiv_id, api_key)
+    print("Main function finished.")
+
+if __name__ == "__main__":
+    main()
