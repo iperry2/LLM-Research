@@ -105,3 +105,50 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+PROJECT OUTPUT:
+
+completed
+FileCounts(cancelled=0, completed=6, failed=0, in_progress=0, total=6)
+
+assistant > file_search
+
+
+assistant > Yes, the papers in the vector store are related. They all focus on the use and development of AI techniques and tools for automating or assisting various phases of systematic literature reviews (SLR). Here's a summary of some of the common themes covered:
+
+1. **Classification and Categorization**:
+   - Multiple tools classify papers as relevant or irrelevant, often using machine learning techniques such as Support Vector Machine (SVM) and logistic regression[0][1].
+   - Other tasks handled include identifying specific types of studies like randomized controlled trials (RCTs) or economic evaluations[0][3].
+
+2. **Feature Extraction and Text Representation**:
+   - Techniques for processing and representing text from papers include Bag of Words (BoW), term frequency-inverse document frequency (TF-IDF), and various word embedding methods such as word2vec, GloVe, and BioBERT[4][3].
+   - These features are crucial for training classifiers to distinguish between relevant and irrelevant papers[0][7].
+
+3. **Search and Retrieval**:
+   - Certain tools act as search engines allowing users to enter natural language queries to retrieve and summarize relevant papers[8].
+   - Enhancements such as Retriever-Augmented Generation (RAG) frameworks help integrate knowledge from scientific documents into these tools[9].
+
+4. **Interactive and Iterative Paper Selection**:
+   - Approaches like active learning and reinforcement learning support interactive and iterative paper selection processes, showing papers with high probability or uncertainty to reviewers for further labeling[10][11].
+
+5. **Visualization and Clustering**:
+   - Tools employ visualization techniques to map relationships among papers based on content similarity and aid reviewers in quality assessment[11].
+   - Clustering techniques are used to group similar papers, which helps in building topic maps and aiding paper selection[13].
+
+Overall, these themes indicate a cohesive area of research focused on leveraging AI to streamline the various stages of conducting systematic literature reviews. The tools mentioned are developed to assist researchers in efficiently finding, classifying, and analyzing relevant scientific literature.
+[0] AI-Lit-Review.pdf
+[1] AI-SLR-Paper.pdf
+[2] AI-Lit-Review.pdf
+[3] AI-Lit-Review.pdf
+[4] AI-SLR-Paper.pdf
+[5] AI-Lit-Review.pdf
+[6] AI-Lit-Review.pdf
+[7] AI-Lit-Review.pdf
+[8] AI-Lit-Review.pdf
+[9] AI-Lit-Review.pdf
+[10] AI-SLR-Paper.pdf
+[11] AI-SLR-Paper.pdf
+[12] AI-SLR-Paper.pdf
+[13] AI-Lit-Review.pdf
