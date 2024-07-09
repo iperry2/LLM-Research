@@ -30,7 +30,7 @@ class EventHandler(AssistantEventHandler):
 
 
 # Set your OpenAI API key as the environment variable OPENAI_API_KEY
-os.environ['OPENAI_API_KEY'] = 'REMOVED'
+os.environ['OPENAI_API_KEY'] = 'YOUR-API-KEY'
 OpenAI.api_key = os.getenv('OPENAI_API_KEY')
  
 client = OpenAI()
