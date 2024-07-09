@@ -9,7 +9,7 @@ import arxiv
 from transformers import pipeline, AutoTokenizer
 
 # Global Variables
-api_key = 'vPm9UzU3oe3DKQ5VCniWo1RTAfD7BRhr3wo78YVZ'
+api_key = 'YOUR-API-KEY'
 arxiv_id = '1810.04805'
 
 # Function prototype to retrieve citation information using Semantic Scholar API
