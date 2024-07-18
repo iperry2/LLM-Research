@@ -1,12 +1,8 @@
 # OPENAI-API
 
-PURPOSE:  Documentation of first experiment done on querying a panda dataframe.  PDF's used in first experiment are in Sample.PDFs.zip.  PDF's are read in, normalized, embedded and put into a database.  Then database is queried upon.  Cosine similarity can be performed and specific questions can be asked on the dataset.
+PURPOSE:  This Repo serves as a reference database for my thesis research conducted at Middle Tennessee State University (2024). The purpose of the experiment is to use various AI API to analyze Astronomical scientific literature.  Using Azure Cloud, we plan to create a team of AI agents, trained on specific areas of Astronomy, to analyze scientific literature in the Astronomy field.  The projects in this database are snippets of code written to test different analysis techniques and do not represent the project in full.  
 
-METHODS:  (1).  Read PDF files in folder into reader  (2).  Create dataframe with files (unedited)  (3).  normalize texts in df   (4).  Use tokenizer to tokenize df  (5).  Embed df  (6). Query or run comparison tests on df
 
-ISSUES:  Context window is an issue in this experiment.  I am only able to feed roughly 25 "chunks" max into a query to fit inside the context window of the chosen LLM, but the query responses are functioning correctly and giving good information.  Another issue that could possibly skew cosine similarity searches is the formatting in PDF's.  Some PDF's repeat the title, authors name, etc at the top of each page.  There are also other formatting techniques that can cause repeat words / phrases.  A method needs to be devised to consider the PDF formats and to act accordingly so that PDF formatting does not skew results.
 
-PREREQUISITES: 
 
-HOW TO USE:
 
